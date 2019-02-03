@@ -1,15 +1,12 @@
 package ru.bootkamp.task1.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import ru.bootkamp.task1.event.FindFileEvent;
-import ru.bootkamp.task1.service.FileService;
 import ru.bootkamp.task1.service.FindFileService;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +31,7 @@ public class FindFileServiceImpl implements FindFileService {
                 files.add(new File(directory + fileEntry.getName()));
             }
         }
-        applicationEventPublisher.publishEvent(new FindFileEvent(new FindFileServiceImpl(), "find files"));
+        applicationEventPublisher.publishEvent(new FindFileEvent(new FindFileServiceImpl(), files.toString()));
         return files;
     }
 }

@@ -18,15 +18,18 @@ import javax.persistence.*;
 @Table(name = "file")
 public class FileEntity {
 
+    //    @Id
+//    @TableGenerator(name = "file_entity_gen",
+//            table = "sequences",
+//            pkColumnName = "seq_name",
+//            valueColumnName = "seq_count",
+//            pkColumnValue = "file",
+//            allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "file_entity_gen")
+//    @Column(name = "id")
     @Id
-    @TableGenerator(name = "file_entity_gen",
-            table = "sequences",
-            pkColumnName = "seq_name",
-            valueColumnName = "seq_count",
-            pkColumnValue = "file",
-            allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "file_entity_gen")
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "serial")
     private Long id;
 
     @Column(name = "file_name")

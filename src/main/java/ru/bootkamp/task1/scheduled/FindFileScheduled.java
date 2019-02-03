@@ -8,9 +8,12 @@ import ru.bootkamp.task1.adapter.FileAdapter;
 import ru.bootkamp.task1.service.FileBlackAndWhiteService;
 import ru.bootkamp.task1.service.FileService;
 import ru.bootkamp.task1.service.FindFileService;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Yuriy Bochkarev
@@ -33,6 +36,7 @@ public class FindFileScheduled {
     private final FileAdapter fileAdapter;
     private final FindFileService findFileService;
     private final FileBlackAndWhiteService fileBlackAndWhiteService;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     @Autowired
     public FindFileScheduled(FileService fileService, FileAdapter fileAdapter, FindFileService findFileService, FileBlackAndWhiteService fileBlackAndWhiteService) {
@@ -47,12 +51,19 @@ public class FindFileScheduled {
         List<File> sourceFiles = findFileService.findFileByDirectory(fileSourceDirectory);
 
         for (File file : sourceFiles) {
-            try {
-                File processingFile = fileBlackAndWhiteService.processingFile(file);
-                fileService.saveFile(fileAdapter.fileToFileEntity(processingFile));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            executorService.submit(new Thread(() -> {
+                File processingFile = null;
+                try {
+                    processingFile = fileBlackAndWhiteService.processingFile(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    fileService.saveFile(fileAdapter.fileToFileEntity(processingFile));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }));
         }
     }
 }
